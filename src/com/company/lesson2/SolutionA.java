@@ -1,3 +1,5 @@
+package com.company.lesson2;
+
 public class SolutionA{
     public static void solution(Node<String> head) {
 
