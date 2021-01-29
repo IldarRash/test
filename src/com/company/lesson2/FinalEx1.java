@@ -3,6 +3,7 @@ package com.company.lesson2;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 
 public class FinalEx1 {
 
@@ -11,40 +12,48 @@ public class FinalEx1 {
         int k = Integer.parseInt(br.readLine());
         int size = Integer.parseInt(br.readLine());
 
-        FixQueue queue = new FixQueue();
+        MyDequee dequee = new MyDequee(size);
         for (int i = 0; i < k; i++) {
-            String command = br.readLine();
+            String[] commands = br.readLine().split(" ");
+            String command = commands[0];
             switch (command) {
-                case "peek": {
-                    if (queue.size() == 0) {
-                        System.out.println("None");
+                case "push_back": {
+                    if (dequee.isFull()) {
+                        System.out.println("error");
                     } else {
-                        System.out.println(queue.peek());
+                        dequee.pushBack(Integer.parseInt(commands[1]));
                     }
                     break;
                 }
 
-                case "pop": {
-                    if (queue.size() == 0) {
-                        System.out.println("None");
+                case "push_front": {
+                    if (dequee.isFull()) {
+                        System.out.println("error");
                     } else {
-                        System.out.println(queue.pollFirst());
+                        dequee.pushFront(Integer.parseInt(commands[1]));
                     }
                     break;
                 }
 
-                case "size": {
-                    System.out.println(queue.size());
+                case "pop_back": {
+                    if (dequee.isEmpty()) {
+                        System.out.println("error");
+                    } else {
+                        System.out.println(dequee.popBack());
+                    }
+                    break;
+                }
+
+                case "pop_front": {
+                    if (dequee.isEmpty()) {
+                        System.out.println("error");
+                    } else {
+                        System.out.println(dequee.popFront());
+                    }
                     break;
                 }
 
                 default: {
-                    String[] strings = command.split(" ");
-                    if (size == queue.size()) {
-                        System.out.println("error");
-                    } else {
-                        queue.offerLast(Integer.parseInt(strings[1]));
-                    }
                     break;
                 }
             }
@@ -55,14 +64,71 @@ public class FinalEx1 {
 class MyDequee {
 
     private int maxSize;
-    private Integer[] frontElements;
-    private Integer[] backElements;
+    private ArrayList<Integer> frontElements;
+    private ArrayList<Integer> backElements;
+
+    private int frontCount = 0;
+    private int backCount = 0;
 
     MyDequee(int size) {
         maxSize = size;
-        frontElements = new Integer[size/2];
-        backElements = new Integer[size/2];
+        frontElements = new ArrayList<>(size/2);
+        backElements = new ArrayList<>(size/2);
     }
 
+
+    public int pushFront(int elem) {
+        if (frontElements.size() == maxSize/2) {
+            backElements.add(elem);
+            backCount++;
+        } else {
+           frontElements.add(elem);
+           frontCount++;
+        }
+        return elem;
+    }
+
+    public int pushBack(int elem) {
+        if (backElements.size() == maxSize/2) {
+            frontElements.add(elem);
+            frontCount++;
+        } else {
+            backElements.add(elem);
+            backCount++;
+        }
+        return elem;
+    }
+
+    public int popFront() {
+        int elem = 0;
+        if (frontCount == 0) {
+            elem = backElements.remove(backCount - 1);
+            backCount--;
+        } else {
+            elem = frontElements.remove(0);
+            frontCount--;
+        }
+        return elem;
+    }
+
+    public int popBack() {
+        int elem = 0;
+        if (backCount == 0) {
+            elem = frontElements.remove(frontCount - 1);
+            frontCount--;
+        } else {
+            elem = backElements.remove(0);
+            backCount--;
+        }
+        return elem;
+    }
+
+    public boolean isFull() {
+        return frontCount + backCount == maxSize;
+    }
+
+    public boolean isEmpty() {
+        return backElements.isEmpty() && frontElements.isEmpty();
+    }
 
 }
