@@ -1,9 +1,34 @@
 package com.company.lesson2;
 
+/*
+-- ПРИНЦИП РАБОТЫ --
+Я реализовал дэк на массиве.
+Так как конечная длинна известна , то добавления в конце массива и в начало будет за константное время
+Мы запоминаем индекс последнего довлаенного элемента в начало и в конец
+И при добавление или при удаления с конца или начала переставляем индексы начала или конца
+
+
+-- ДОКАЗАТЕЛЬСТВО КОРРЕКТНОСТИ --
+Так как нам нужен дэк , то главные условия реализаций это доавление в начало и в конец за O(1)
+и удаление в начало и в конец за O(1). Соотвественно так как наша реализация сделана на массиве , то
+добавление и удаленние по индексу будет стоить O(1), а индексы начала и конца всегда есть ,
+ следовательно и операций добавление в начало и в конец будут стоить O(1),
+  так же и для удаления
+
+-- ВРЕМЕННАЯ СЛОЖНОСТЬ --
+Про временную сложность описывал выше
+
+
+-- ПРОСТРАНСТВЕННАЯ СЛОЖНОСТЬ --
+Дэк сделан на массиве следовательно у него может быть не было O(n) элементов
+*/
+
+// id  успешной посылки 49161734
+
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
 
 public class FinalEx1 {
 
@@ -12,14 +37,15 @@ public class FinalEx1 {
         int k = Integer.parseInt(br.readLine());
         int size = Integer.parseInt(br.readLine());
 
-        MyDequee dequee = new MyDequee(size);
+        MyDeque dequee = new MyDeque(size);
+        StringBuilder builder = new StringBuilder();
         for (int i = 0; i < k; i++) {
             String[] commands = br.readLine().split(" ");
             String command = commands[0];
             switch (command) {
                 case "push_back": {
-                    if (dequee.isFull()) {
-                        System.out.println("error");
+                    if (dequee.size() == size) {
+                       builder.append("error\n");
                     } else {
                         dequee.pushBack(Integer.parseInt(commands[1]));
                     }
@@ -27,8 +53,8 @@ public class FinalEx1 {
                 }
 
                 case "push_front": {
-                    if (dequee.isFull()) {
-                        System.out.println("error");
+                    if (dequee.size() == size) {
+                        builder.append("error\n");
                     } else {
                         dequee.pushFront(Integer.parseInt(commands[1]));
                     }
@@ -36,19 +62,19 @@ public class FinalEx1 {
                 }
 
                 case "pop_back": {
-                    if (dequee.isEmpty()) {
-                        System.out.println("error");
+                    if (dequee.size() == 0) {
+                        builder.append("error\n");
                     } else {
-                        System.out.println(dequee.popBack());
+                       builder.append(dequee.popBack() + "\n");
                     }
                     break;
                 }
 
                 case "pop_front": {
-                    if (dequee.isEmpty()) {
-                        System.out.println("error");
+                    if (dequee.size() == 0) {
+                        builder.append("error\n");
                     } else {
-                        System.out.println(dequee.popFront());
+                        builder.append(dequee.popFront() + "\n");
                     }
                     break;
                 }
@@ -58,77 +84,74 @@ public class FinalEx1 {
                 }
             }
         }
+
+        System.out.println(builder.toString().trim());
     }
 }
 
-class MyDequee {
-
+class MyDeque {
+    private int size;
+    private int head, end;
+    private int[] data;
     private int maxSize;
-    private ArrayList<Integer> frontElements;
-    private ArrayList<Integer> backElements;
 
-    private int frontCount = 0;
-    private int backCount = 0;
-
-    MyDequee(int size) {
-        maxSize = size;
-        frontElements = new ArrayList<>(size/2);
-        backElements = new ArrayList<>(size/2);
+    public MyDeque(int maxSize) {
+        this.maxSize = maxSize;
+        data = new int[maxSize];
+        head = 0;
+        end = 0;
+        size = 0;
     }
 
-
-    public int pushFront(int elem) {
-        if (frontElements.size() == maxSize/2) {
-            backElements.add(elem);
-            backCount++;
-        } else {
-           frontElements.add(elem);
-           frontCount++;
+    public void pushFront(int e) {
+       if (size==0) {
+            end = head;
+            data[head] = e;
+            size++;
         }
-        return elem;
+        else {
+            head++;
+            if (head>=maxSize)
+                head = 0;
+            data[head] = e;
+            size++;
+        }
     }
 
-    public int pushBack(int elem) {
-        if (backElements.size() == maxSize/2) {
-            frontElements.add(elem);
-            frontCount++;
-        } else {
-            backElements.add(elem);
-            backCount++;
+    public void pushBack(int e) {
+        if (size==0) {
+            head = end;
+            data[end] = e;
+            size++;
         }
-        return elem;
-    }
-
-    public int popFront() {
-        int elem = 0;
-        if (frontCount == 0) {
-            elem = backElements.remove(backCount - 1);
-            backCount--;
-        } else {
-            elem = frontElements.remove(0);
-            frontCount--;
+        else {
+            end--;
+            if (end<0)
+                end = maxSize-1;
+            data[end] = e;
+            size++;
         }
-        return elem;
     }
 
     public int popBack() {
-        int elem = 0;
-        if (backCount == 0) {
-            elem = frontElements.remove(frontCount - 1);
-            frontCount--;
-        } else {
-            elem = backElements.remove(0);
-            backCount--;
-        }
-        return elem;
+        int tmp = data[end];
+        end++;
+        if (end>=maxSize)
+            end = 0;
+        size --;
+        return tmp;
     }
 
-    public boolean isFull() {
-        return frontCount + backCount == maxSize;
+    public int popFront() {
+        int tmp = data[head];
+        head--;
+        if (head<0)
+            head = maxSize - 1;
+        size --;
+        return tmp;
     }
 
-    public boolean isEmpty() {
-        return backElements.isEmpty() && frontElements.isEmpty();
+    public int size() {
+        return size;
     }
-
 }
