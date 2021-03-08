@@ -4,55 +4,87 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class Combinations {
-    private static List<Character> two = List.of('a', 'b', 'c');
-    private static List<Character> three = List.of('d', 'e', 'f');
-    private static List<Character> four = List.of('g', 'h', 'i');
-    private static List<Character> five = List.of('j', 'k', 'l');
-    private static List<Character> six = List.of('m', 'n', 'o');
-    private static List<Character> seven = List.of('p', 'q', 'r', 's');
-    private static List<Character> eight = List.of('t', 'u', 'v');
-    private static List<Character> nine = List.of('w', 'x', 'y', 'z');
+    private static List<Character> two = Arrays.asList('a', 'b', 'c');
+    private static List<Character> three = Arrays.asList('d', 'e', 'f');
+    private static List<Character> four = Arrays.asList('g', 'h', 'i');
+    private static List<Character> five = Arrays.asList('j', 'k', 'l');
+    private static List<Character> six = Arrays.asList('m', 'n', 'o');
+    private static List<Character> seven = Arrays.asList('p', 'q', 'r', 's');
+    private static List<Character> eight = Arrays.asList('t', 'u', 'v');
+    private static List<Character> nine = Arrays.asList('w', 'x', 'y', 'z');
 
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         String str = br.readLine();
-        List<List<Character>> combines = new ArrayList<>();
-        for(Character ch : str.toCharArray()) {
-            switch (ch) {
-                case '2' -> combines.add(two);
-                case '3' -> combines.add(three);
-                case '4' -> combines.add(four);
-                case '5' -> combines.add(five);
-                case '6' -> combines.add(six);
-                case '7' -> combines.add(seven);
-                case '8' -> combines.add(eight);
-                case '9' -> combines.add(nine);
-            }
+        List<Character> combines = new ArrayList<>();
+        for (int i = 0; i < str.length(); i ++) {
+            combines.add(str.charAt(i));
         }
-        //gen(combines, str.length(), 0, new Character[4], combines.get(0));
-    }
-
-    private static void gen(List<List<Character>> combines, int len, int index, List<Character> curr) {
-        if (index == curr.size() - 1){
-
-           // gen();
-        }
-
-        if (len == combines.size() - 1) {
-            if (index == curr.size() - 1) {
-               // formatStr(str);
-            }
-        }
-    }
-
-    private static void formatStr(Character[] arr) {
         StringBuilder builder = new StringBuilder();
-        for(Character character : arr) {
-            builder.append(character);
+        gen(combines, builder, 0,"");
+
+        System.out.println(builder.toString().trim());
+    }
+
+    private static void gen(List<Character> combines, StringBuilder curr, int index, String str) {
+        if (combines.size() == index) {
+            curr.append(str + " ");
+            return;
         }
-        System.out.println(builder.toString());
+        Character ch = combines.get(index);
+        switch (ch) {
+            case '2' : {
+                for (Character character : two) {
+                    gen(combines, curr, index + 1, str + character);
+                }
+                break;
+            }
+            case '3' : {
+                for (Character character : three) {
+                    gen(combines, curr,index + 1, str + character);
+                }
+                break;
+            }
+            case '4' : {
+                for (Character character : four) {
+                    gen(combines, curr,index + 1, str + character);
+                }
+                break;
+            }
+            case '5' : {
+                for (Character character : five) {
+                    gen(combines, curr, index + 1,str + character);
+                }
+                break;
+            }
+            case '6' : {
+                for (Character character : six) {
+                    gen(combines, curr, index + 1,str + character);
+                }
+                break;
+            }
+            case '7' : {
+                for (Character character : seven) {
+                    gen(combines, curr,index + 1, str + character);
+                }
+                break;
+            }
+            case '8': {
+                for (Character character : eight) {
+                    gen(combines, curr,index + 1, str + character);
+                }
+                break;
+            }
+            case '9' : {
+                for (Character character : nine) {
+                    gen(combines, curr,index + 1, str + character);
+                }
+                break;
+            }
+        }
     }
 }
